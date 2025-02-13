@@ -1,42 +1,91 @@
 #root {
   max-width: 1280px;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0rem 2rem;
+  width: 100%;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+#modified-logo {
+  display: flex;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#lexmeet_logo {
+  width: 170px;
+  height: auto;
+  margin-right: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+#todo_logo {
+  margin: 0;
+  font-weight: bold;
+  color: rgb(var(--static-brand-orange));
 }
 
-.card {
-  padding: 2em;
+.main {
+  padding: 2rem 0rem;
 }
 
-.read-the-docs {
-  color: #888;
+.title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-container {
+  padding: 0 20px;
+}
+
+.tasklist {
+  /* border-radius: 20px; */
+}
+
+.tasklist-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border-width: 2px;
+  border-style: solid;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.tasklist-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 15px 0px;
+  padding: 0;
+  row-gap: 10px;
+}
+
+.tasklist-list-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 5px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 0 10px;
+  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.tasklist-list-item:hover {
+  border: 1px solid black;
+  box-shadow: 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
+}
+
+.tasklist-list-item-checkbutton {
+  border: none;
+  background-color: transparent;
+  position: relative;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.tasklist-list-item-text {
+  flex: 1 1 0;
+
 }
