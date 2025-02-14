@@ -1,9 +1,15 @@
 #root {
+  font-family: "Lato", serif;
   max-width: 1280px;
   min-height: 100vh;
   margin: 0 auto;
   padding: 0rem 2rem;
   width: 100%;
+}
+
+#app-header {
+  display: flex;
+  justify-content: space-between;
 }
 
 #modified-logo {
@@ -18,6 +24,7 @@
 
 #todo_logo {
   margin: 0;
+  font-family: "Roboto Slab", serif;
   font-weight: bold;
   color: rgb(var(--static-brand-orange));
 }
@@ -40,6 +47,7 @@
 }
 
 .tasklist-title {
+  font-family: "Roboto Slab", serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,6 +56,10 @@
   border-style: solid;
   border-radius: 7px;
   position: relative;
+}
+
+.tasklist-title:hover button {
+  display: block;
 }
 
 .tasklist-title>span {
@@ -63,13 +75,17 @@
   right: 0;
   top: 0;
   bottom: 0;
+  padding: 5px;
 }
 
-.tasklist-massactions>button {
+.tasklist-massactions button {
   height: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   background: transparent;
   border: none;
+  border-radius: 10px;
+  padding: 0;
+  display: none;
 }
 
 .tasklist-list {
@@ -155,8 +171,18 @@
 
 .tasklist-list-item-text {
   flex: 1 1 0;
-  padding: 10px 5px;
+  padding: 5px;
+  height: 50px;
   cursor: default;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 20px;
+}
+
+.tasklist-list-item-text-duedate {
+  font-size: 12px;
 }
 
 .tasklist-list-item-controls-container {

@@ -1,5 +1,4 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   /* 
@@ -47,13 +46,19 @@
   visibility: visible;
 }
 
+.hover-outline:hover {
+  outline: 1px solid black;
+}
+
 @keyframes flicker {
   0% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.2;
   }
+
   100% {
     opacity: 1;
   }
@@ -64,5 +69,4 @@
   animation: flicker 1s infinite ease-in-out;
 }
 
-.flicker {
-}
+.flicker {}
