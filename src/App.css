@@ -44,11 +44,32 @@
   justify-content: center;
   align-items: center;
   height: 50px;
-  border-width: 2px;
+  border-width: 3px;
   border-style: solid;
+  border-radius: 7px;
+  position: relative;
+}
+
+.tasklist-title>span {
   text-transform: uppercase;
   font-weight: bold;
   font-size: 1.5em;
+}
+
+.tasklist-massactions {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.tasklist-massactions>button {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  background: transparent;
+  border: none;
 }
 
 .tasklist-list {
@@ -57,8 +78,9 @@
   list-style: none;
   margin: 15px 0px;
   padding: 0;
-  row-gap: 10px;
+  row-gap: 5px;
 }
+
 
 .tasklist-list-item {
   display: flex;
@@ -68,7 +90,11 @@
   border: 1px solid transparent;
   border-radius: 7px;
   padding: 0 10px;
-  transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition:
+    border 0.1s ease-in-out,
+    box-shadow 0.1s ease-in-out,
+    transform 0.1s ease-in-out,
+    opacity 0.3s;
 }
 
 .tasklist-list-item:hover {
@@ -77,15 +103,93 @@
   transform: translate(-2px, -2px);
 }
 
-.tasklist-list-item-checkbutton {
+.tasklist-list-item-masshover {
+  border: 1px solid black;
+  box-shadow: 4px 4px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
+}
+
+.tasklist-list-item-checkbox {
   border: none;
   background-color: transparent;
   position: relative;
-  height: 100%;
+  padding: 5px;
   aspect-ratio: 1 / 1;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+}
+
+.tasklist-list-item-checkbox-square {
+  aspect-ratio: 1/1;
+  height: 20px;
+  border: 2px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@keyframes flicker-orange {
+
+  0%,
+  100% {
+    background-color: rgba(244, 81, 44, 0.8);
+  }
+
+  50% {
+    background-color: rgba(244, 81, 44, 0);
+  }
+}
+
+.tasklist-list-item-checkbox-square:hover {
+  animation: flicker-orange 1s infinite;
+}
+
+.tasklist-list-item-checkbox-checkicon {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translate(-50%);
+  color: rgb(var(--static-brand-purple));
+  pointer-events: none;
 }
 
 .tasklist-list-item-text {
   flex: 1 1 0;
+  padding: 10px 5px;
+  cursor: default;
+}
 
+.tasklist-list-item-controls-container {
+  display: flex;
+  height: 100%;
+  gap: 10px;
+}
+
+.tasklist-list-item-controls {
+  background-color: transparent;
+  border: none;
+  height: 100%;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.tasklist-list-item-controls:hover {
+  outline: 1px solid black;
+}
+
+.tasklist-list-item-edit {
+  visibility: hidden;
+}
+
+.tasklist-list-item-delete {
+  visibility: hidden;
+}
+
+.task-control-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
 }

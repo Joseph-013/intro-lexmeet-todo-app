@@ -30,3 +30,39 @@
 .strikethrough {
   text-decoration: line-through;
 }
+
+.block {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flicker-warning {
+  color: red;
+  animation: flicker 1s infinite ease-in-out;
+}
+
+.flicker {
+}
