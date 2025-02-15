@@ -219,7 +219,7 @@ function App() {
 
       return (
         <li
-          className={`tasklist-list-item ${massHover && "tasklist-list-item-masshover"}`}
+          className={`tasklist-list-item ${massHover ? "tasklist-list-item-masshover" : ""}`}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
@@ -289,7 +289,7 @@ function App() {
               </div>
             </BootstrapModal>
             <button
-              className={`tasklist-list-item-delete tasklist-list-item-controls ${hovered && "visible"}`}
+              className={`tasklist-list-item-delete tasklist-list-item-controls ${hovered ? "visible" : ""}`}
               onClick={() => deleteTask(task.id)}
             >
               <Cross1Icon height={20} width={20} />
