@@ -10,6 +10,7 @@
 #app-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 #modified-logo {
@@ -29,6 +30,11 @@
   color: rgb(var(--static-brand-orange));
 }
 
+#header-newtask-input-container {
+  display: flex;
+  gap: 10px;
+}
+
 .main {
   padding: 2rem 0rem;
 }
@@ -42,9 +48,9 @@
   padding: 0 20px;
 }
 
-.tasklist {
-  /* border-radius: 20px; */
-}
+/* .tasklist {
+  border-radius: 20px;
+} */
 
 .tasklist-title {
   font-family: "Roboto Slab", serif;

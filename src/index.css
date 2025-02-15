@@ -50,6 +50,10 @@
   outline: 1px solid black;
 }
 
+.outline-light {
+  outline: 1px solid rgba(0, 0, 0, 0.137);
+}
+
 @keyframes flicker {
   0% {
     opacity: 1;
@@ -69,4 +73,8 @@
   animation: flicker 1s infinite ease-in-out;
 }
 
-.flicker {}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

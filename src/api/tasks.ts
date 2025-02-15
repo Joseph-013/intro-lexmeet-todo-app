@@ -2,11 +2,12 @@ import dayjs from "dayjs";
 import { NewTask, Task } from "../types/task";
 
 // Demonstrating API data retrieval using mock data: From JSONPlaceholder(my preference) or MockAPI
-const API_URL = "https://jsonplaceholder.typicode.com/todos";
+const FAKEDATA_API_URL = "https://jsonplaceholder.typicode.com/todos";
 const DATE_FORMAT = "YYYY-MM-DD HH:mm";
+const FAKEUPLOADENDPOINT_API_URL = "https://webhook.site/c7217343-7479-4621-b12a-7830fe7043c9"
 
 export const fetchTasks = async (): Promise<Task[]> => {
-  const response = await fetch(API_URL); //GET
+  const response = await fetch(FAKEDATA_API_URL); //GET
   // @ts-expect-error TODO: implement proper error
   if (!response.ok) throw new Error("Task fetching failed");
 
@@ -33,7 +34,7 @@ export const fetchTasks = async (): Promise<Task[]> => {
 //     }
 //   ]
 
-//   const response = await fetch(API_URL, {
+//   const response = await fetch(FAKEDATA_API_URL, {
 //     method: "POST",
 //     body: JSON.stringify(task)
 //   }); //GET

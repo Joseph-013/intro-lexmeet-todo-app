@@ -1,4 +1,4 @@
-import { CheckIcon, Cross1Icon, Cross2Icon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { CheckIcon, Cross1Icon, Cross2Icon, Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import "./App.css";
 import logo from "./assets/lexmeet_logo.png";
 import { sampleTasks, Task, TaskListProps } from "./types/task";
@@ -9,6 +9,10 @@ import { formatToLocalISOString } from "./utils/utils";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(structuredClone(sampleTasks));
+  const [newTask, setNewTask] = useState<{ text: string; dueDate: Date | undefined }>({
+    text: "",
+    dueDate: undefined,
+  });
 
   function setTasksDone(tasks: Task[]): Task[] {
     return tasks.map((task) => (task.completedAt ? task : { ...task, completedAt: new Date(), updatedAt: new Date() }));
@@ -57,6 +61,29 @@ function App() {
     setTasks((prev) => prev.filter((task) => task.id !== taskId));
   }
 
+  function createTask() {
+    if (newTask.text === "") return;
+    const _newTask: Task = {
+      ...newTask,
+      id: getNextId(),
+      completedAt: undefined,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    console.log(_newTask);
+    console.log(tasks);
+    setTasks((prev) => [...prev, _newTask]);
+  }
+
+  function getNextId(): number {
+    let highestId = 0;
+    tasks.forEach((task) => {
+      if (task.id > highestId) highestId = task.id;
+    });
+    return ++highestId;
+  }
+
   return (
     <main className="main">
       <header id="app-header">
@@ -66,7 +93,35 @@ function App() {
             <h5 id="todo_logo">My TODO</h5>
           </div>
         </div>
-        <div>create task</div>
+        <div id="header-newtask-input-container">
+          <div className="input-group">
+            <span className="input-group-text">New Task:</span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Task Name"
+              value={newTask.text}
+              onChange={(e) => setNewTask((prev) => ({ ...prev, text: e.target.value }))}
+            />
+            <input
+              type="datetime-local"
+              className="form-control"
+              value={newTask.dueDate ? formatToLocalISOString(newTask.dueDate) : ""}
+              onChange={(e) => {
+                setNewTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
+              }}
+            />
+            <button
+              className="btn outline-light hover-outline"
+              onClick={() => setNewTask({ text: "", dueDate: undefined })}
+            >
+              Clear
+            </button>
+          </div>
+          <button className="btn outline-light hover-outline center" onClick={() => createTask()}>
+            <PlusIcon height={20} width={20} />
+          </button>
+        </div>
       </header>
       <div className="mt-5 container-fluid row list">
         <div className="col list-container">
