@@ -6,7 +6,7 @@ type BootstrapModalPropType = {
   negAction?: (setVisible: React.Dispatch<React.SetStateAction<boolean>>) => void;
   posActionName?: string;
   negActionName?: string;
-  button: {
+  trigger: {
     className?: string;
     children: React.ReactNode;
   };
@@ -23,8 +23,8 @@ function BootstrapModal(props: BootstrapModalPropType) {
 
   return (
     <>
-      <button type="button" className={`${props.button?.className || "btn btn-primary"}`} onClick={toggleVisibility}>
-        {props.button.children}
+      <button type="button" className={`${props.trigger?.className || "btn btn-primary"}`} onClick={toggleVisibility}>
+        {props.trigger.children}
       </button>
 
       {visible &&

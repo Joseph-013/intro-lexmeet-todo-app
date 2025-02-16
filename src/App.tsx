@@ -252,7 +252,7 @@ function App() {
           </div>
           <div className="tasklist-list-item-controls-container">
             <BootstrapModal
-              button={{
+              trigger={{
                 className: `tasklist-list-item-edit tasklist-list-item-controls ${hovered && "visible"}`,
                 children: <Pencil1Icon height={20} width={20} />,
               }}
@@ -288,12 +288,22 @@ function App() {
                 </div>
               </div>
             </BootstrapModal>
-            <button
+            <BootstrapModal
+              trigger={{
+                className: `tasklist-list-item-delete tasklist-list-item-controls ${hovered ? "visible" : ""}`,
+                children: <Cross1Icon height={20} width={20} />,
+              }}
+              negActionName="Delete"
+              negAction={() => deleteTask(task.id)}
+            >
+              Are you sure you want to delete this task?
+            </BootstrapModal>
+            {/* <button
               className={`tasklist-list-item-delete tasklist-list-item-controls ${hovered ? "visible" : ""}`}
               onClick={() => deleteTask(task.id)}
             >
               <Cross1Icon height={20} width={20} />
-            </button>
+            </button> */}
           </div>
         </li>
       );
