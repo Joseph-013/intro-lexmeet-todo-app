@@ -7,19 +7,18 @@ export type Task = {
   updatedAt: Date;
 }
 
+type TaskListActionType = {
+  display: React.ReactNode;
+  action: () => void;
+}
+
 export type TaskListProps = {
   className?: string;
   colorTheme: string;
   title: string;
   tasks: Task[];
-  action1?: {
-    display: React.ReactNode;
-    action: () => void;
-  };
-  action2?: {
-    display: React.ReactNode;
-    action: () => void;
-  };
+  action1?: TaskListActionType;
+  action2?: TaskListActionType;
 };
 
 

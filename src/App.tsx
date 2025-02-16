@@ -1,88 +1,46 @@
 import { CheckIcon, Cross1Icon, Cross2Icon, Pencil1Icon, PlusIcon, TrashIcon } from "@radix-ui/react-icons";
 import "./App.css";
 import logo from "./assets/lexmeet_logo.png";
-import { sampleTasks, Task, TaskListProps } from "./types/task";
+import { Task, TaskListProps } from "./types/task";
 import { colors } from "./constants/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BootstrapModal from "./components/BootstrapModal";
-import { formatToLocalISOString } from "./utils/utils";
+import { formatToLocalISOString, useTask } from "./utils/utils";
+import { fetchTasks } from "./api/tasks";
+import dayjs from "dayjs";
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(structuredClone(sampleTasks));
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const fetchedTasks = await fetchTasks();
+        setTasks(fetchedTasks);
+      } catch (err) {
+        console.warn("Fetching dummy tasks failed:", err);
+      }
+    };
+
+    loadTasks();
+  }, []);
+
   const [newTask, setNewTask] = useState<{ text: string; dueDate: Date | undefined }>({
     text: "",
     dueDate: undefined,
   });
 
-  function setTasksDone(tasks: Task[]): Task[] {
-    return tasks.map((task) => (task.completedAt ? task : { ...task, completedAt: new Date(), updatedAt: new Date() }));
-  }
-
-  function setTasksUndone(tasks: Task[]): Task[] {
-    return tasks.map((task) => ({ ...task, completedAt: undefined, updatedAt: new Date() }));
-  }
-
-  function groupDeleteIncompleteTasks(tasks: Task[]): Task[] {
-    const temp = [...tasks];
-    const newTasks = temp.filter((task) => Boolean(task.completedAt));
-    return newTasks;
-  }
-
-  function groupDeleteCompleteTasks(tasks: Task[]): Task[] {
-    const temp = [...tasks];
-    const newTasks = temp.filter((task) => Boolean(!task.completedAt));
-    return newTasks;
-  }
-
-  function switchTaskCompletedAt(taskId: number) {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? { ...task, updatedAt: new Date(), completedAt: task.completedAt ? undefined : new Date() }
-          : task
-      )
-    );
-  }
-
-  function modifyTaskDueDate(taskId: number, date: Date | undefined) {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), dueDate: date } : task))
-    );
-  }
-
-  function modifyTaskText(taskId: number, text: string) {
-    if (!text) return;
-    setTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), text: text } : task))
-    );
-  }
-
-  function deleteTask(taskId: number) {
-    setTasks((prev) => prev.filter((task) => task.id !== taskId));
-  }
-
-  function createTask() {
-    if (newTask.text === "") return;
-    const _newTask: Task = {
-      ...newTask,
-      id: getNextId(),
-      completedAt: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    console.log(_newTask);
-    console.log(tasks);
-    setTasks((prev) => [...prev, _newTask]);
-  }
-
-  function getNextId(): number {
-    let highestId = 0;
-    tasks.forEach((task) => {
-      if (task.id > highestId) highestId = task.id;
-    });
-    return ++highestId;
-  }
+  const {
+    setTasksDone,
+    setTasksUndone,
+    groupDeleteIncompleteTasks,
+    groupDeleteCompleteTasks,
+    switchTaskCompletedAt,
+    modifyTaskDueDate,
+    modifyTaskText,
+    deleteTask,
+    createTask,
+  } = useTask(tasks, setTasks);
 
   return (
     <main className="main">
@@ -111,14 +69,11 @@ function App() {
                 setNewTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
               }}
             />
-            <button
-              className="btn outline-light hover-outline"
-              onClick={() => setNewTask({ text: "", dueDate: undefined })}
-            >
+            <button className="btn border-light" onClick={() => setNewTask({ text: "", dueDate: undefined })}>
               Clear
             </button>
           </div>
-          <button className="btn outline-light hover-outline center" onClick={() => createTask()}>
+          <button className="btn border-light center" onClick={() => createTask(newTask)}>
             <PlusIcon height={20} width={20} />
           </button>
         </div>
@@ -133,11 +88,11 @@ function App() {
             colorTheme={colors.brand.orange}
             action1={{
               display: <CheckIcon height={30} width={30} />,
-              action: () => setTasks((prev) => setTasksDone(prev)),
+              action: () => setTasksDone(),
             }}
             action2={{
               display: <TrashIcon height={27} width={27} />,
-              action: () => setTasks((prev) => groupDeleteIncompleteTasks(prev)),
+              action: () => groupDeleteIncompleteTasks(),
             }}
           />
         </div>
@@ -150,11 +105,11 @@ function App() {
             colorTheme={colors.brand.purple}
             action1={{
               display: <Cross2Icon height={28} width={28} />,
-              action: () => setTasks((prev) => setTasksUndone(prev)),
+              action: () => setTasksUndone(),
             }}
             action2={{
               display: <TrashIcon height={27} width={27} />,
-              action: () => setTasks((prev) => groupDeleteCompleteTasks(prev)),
+              action: () => groupDeleteCompleteTasks(),
             }}
           />
         </div>
@@ -169,8 +124,8 @@ function App() {
     return (
       <div
         className={`tasklist ${props.className}`}
-        onMouseEnter={() => setListHovered(true)}
-        onMouseLeave={() => setListHovered(false)}
+        onMouseOver={() => setListHovered(true)}
+        onMouseOut={() => setListHovered(false)}
       >
         <div
           className="tasklist-title"
@@ -182,24 +137,44 @@ function App() {
           <span>{props.title}</span>
           <div className="tasklist-massactions">
             {props.action1 && (
-              <button
-                className="tasklist-massactions-done hover-outline"
-                onMouseEnter={() => setMassHover(true)}
-                onMouseLeave={() => setMassHover(false)}
-                onClick={() => props.action1?.action()}
+              // <button
+              //   className="tasklist-massactions-done hover-outline"
+              //   onMouseOver={() => setMassHover(true)}
+              //   onMouseOut={() => setMassHover(false)}
+              //   onClick={() => props.action1?.action()}
+              // >
+              //   {props.action1.display}
+              // </button>
+              <BootstrapModal
+                trigger={{
+                  className: "tasklist-massactions-done hover-outline",
+                  children: props.action1.display,
+                  // onClick: () => props.action1?.action(),
+                  triggerProps: {
+                    onMouseOver: () => setMassHover(true),
+                    onMouseOut: () => setMassHover(false),
+                  },
+                }}
+                posActionName="Confirm"
+                posAction={() => props.action1?.action()}
               >
-                {props.action1.display}
-              </button>
+                Confirm set all as complete.
+              </BootstrapModal>
             )}
             {props.action2 && (
               <button
                 className="tasklist-massactions-delete hover-outline"
-                onMouseEnter={() => setMassHover(true)}
-                onMouseLeave={() => setMassHover(false)}
+                onMouseOver={() => setMassHover(true)}
+                onMouseOut={() => setMassHover(false)}
                 onClick={() => props.action2?.action()}
               >
                 {props.action2.display}
               </button>
+              // <BootstrapModal
+              //   trigger={{ className: "tasklist-massactions-done hover-outline", children: props.action1.display }}
+              // >
+              //   Confirm delete tasks.
+              // </BootstrapModal>
             )}
           </div>
         </div>
@@ -220,8 +195,8 @@ function App() {
       return (
         <li
           className={`tasklist-list-item ${massHover ? "tasklist-list-item-masshover" : ""}`}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          onMouseOver={() => setHovered(true)}
+          onMouseOut={() => setHovered(false)}
         >
           <div className="tasklist-list-item-checkbox">
             <input
@@ -246,15 +221,20 @@ function App() {
             {task.dueDate && (
               <>
                 <br />
-                <span className="tasklist-list-item-text-duedate">{task.dueDate.toLocaleString()}</span>
+                <span className="tasklist-list-item-text-duedate">
+                  {dayjs(task.dueDate).format("MMM DD, YYYY h:mm A")}
+                </span>
               </>
             )}
           </div>
-          <div className="tasklist-list-item-controls-container">
+          <div className="tasklist-list-item-controls-container" style={{ display: hovered ? "flex" : "none" }}>
             <BootstrapModal
               trigger={{
                 className: `tasklist-list-item-edit tasklist-list-item-controls ${hovered && "visible"}`,
                 children: <Pencil1Icon height={20} width={20} />,
+                onClick: () => {
+                  setHovered(false);
+                },
               }}
               title="Edit Task"
               posActionName="Save"
@@ -282,9 +262,11 @@ function App() {
                     value={datetime ? formatToLocalISOString(datetime) : ""}
                     onChange={(e) => {
                       setDatetime(new Date(e.target.value));
-                      console.log(e.target.value);
                     }}
                   />
+                  <button className="btn btn-secondary" onClick={() => setDatetime(null)}>
+                    Clear
+                  </button>
                 </div>
               </div>
             </BootstrapModal>
@@ -292,18 +274,15 @@ function App() {
               trigger={{
                 className: `tasklist-list-item-delete tasklist-list-item-controls ${hovered ? "visible" : ""}`,
                 children: <Cross1Icon height={20} width={20} />,
+                onClick: () => {
+                  setHovered(false);
+                },
               }}
               negActionName="Delete"
               negAction={() => deleteTask(task.id)}
             >
               Are you sure you want to delete this task?
             </BootstrapModal>
-            {/* <button
-              className={`tasklist-list-item-delete tasklist-list-item-controls ${hovered ? "visible" : ""}`}
-              onClick={() => deleteTask(task.id)}
-            >
-              <Cross1Icon height={20} width={20} />
-            </button> */}
           </div>
         </li>
       );

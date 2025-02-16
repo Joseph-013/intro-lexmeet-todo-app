@@ -9,6 +9,8 @@ type BootstrapModalPropType = {
   trigger: {
     className?: string;
     children: React.ReactNode;
+    onClick?: () => void;
+    triggerProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   };
   title?: string;
   children?: React.ReactNode;
@@ -17,13 +19,32 @@ type BootstrapModalPropType = {
 function BootstrapModal(props: BootstrapModalPropType) {
   const [visible, setVisible] = useState<boolean>(false);
 
-  const toggleVisibility = () => {
-    setVisible((prev) => !prev);
-  };
+  // const toggleVisibility = () => {
+  //   if (props.trigger?.onClick) {
+  //     props.trigger.onClick();
+  //   }
+  //   setVisible((prev) => {
+  //     const newState = !prev;
+  //     return newState;
+  //   });
+  // };
+
+  // const triggerClick = (e) => {
+  //   if (props.trigger.onClick)
+  //   props.trigger.onClick()
+  // }
 
   return (
     <>
-      <button type="button" className={`${props.trigger?.className || "btn btn-primary"}`} onClick={toggleVisibility}>
+      <button
+        type="button"
+        className={`${props.trigger?.className || "btn btn-primary"}`}
+        {...props.trigger?.triggerProps}
+        onClick={() => {
+          if (props.trigger.onClick) props.trigger.onClick();
+          setVisible(true);
+        }}
+      >
         {props.trigger.children}
       </button>
 
@@ -36,14 +57,13 @@ function BootstrapModal(props: BootstrapModalPropType) {
                   {props.title && (
                     <div className="modal-header">
                       <h1 className="modal-title fs-5">{props.title}</h1>
-                      <button type="button" className="btn-close" onClick={toggleVisibility}></button>
                     </div>
                   )}
 
                   {props?.children && <div className="modal-body">{props.children}</div>}
 
                   <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" onClick={toggleVisibility}>
+                    <button type="button" className="btn btn-secondary" onClick={() => setVisible(false)}>
                       Close
                     </button>
                     {props.negAction && (
@@ -60,7 +80,7 @@ function BootstrapModal(props: BootstrapModalPropType) {
                 </div>
               </div>
             </div>
-            <div className="modal-backdrop fade show" onClick={toggleVisibility}></div>
+            <div className="modal-backdrop fade show" onClick={() => setVisible(false)}></div>
           </>,
           document.body
         )}

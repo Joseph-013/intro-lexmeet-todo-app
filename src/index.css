@@ -30,6 +30,10 @@
   text-decoration: line-through;
 }
 
+.flex {
+  display: flex;
+}
+
 .block {
   display: block;
 }
@@ -52,6 +56,10 @@
 
 .outline-light {
   outline: 1px solid rgba(0, 0, 0, 0.137);
+}
+
+.border-light {
+  border: 1px solid rgba(0, 0, 0, 0.137) !important;
 }
 
 @keyframes flicker {
