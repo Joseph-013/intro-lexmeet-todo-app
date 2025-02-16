@@ -36,8 +36,9 @@ function App() {
     groupDeleteIncompleteTasks,
     groupDeleteCompleteTasks,
     switchTaskCompletedAt,
-    modifyTaskDueDate,
-    modifyTaskText,
+    modifyTaskProps,
+    // modifyTaskDueDate,
+    // modifyTaskText,
     deleteTask,
     createTask,
   } = useTask(tasks, setTasks);
@@ -234,8 +235,10 @@ function App() {
               title="Edit Task"
               posActionName="Save"
               posAction={(setVisible) => {
-                modifyTaskText(task.id, taskString);
-                modifyTaskDueDate(task.id, datetime ? datetime : undefined);
+                // console.log("reached");
+                // modifyTaskText(task.id, taskString);
+                // modifyTaskDueDate(task.id, datetime ? datetime : undefined);
+                modifyTaskProps(task.id, taskString, datetime);
                 setVisible(false);
               }}
             >

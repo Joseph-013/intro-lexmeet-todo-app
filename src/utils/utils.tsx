@@ -78,18 +78,27 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
     setter(temp);
   };
 
-  const modifyTaskDueDate = (taskId: number, date: Date | undefined) => {
-    const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), dueDate: date } : task));
+  const modifyTaskProps = (taskId: number, text: string, dueDate: Date | null) => {
+    const temp = tasks.map((task) =>
+      task.id === taskId ? { ...task, text: text, updatedAt: new Date(), dueDate: dueDate ? dueDate : undefined } : task
+    );
     updateTasks(temp);
     setter(temp);
   };
 
-  const modifyTaskText = (taskId: number, text: string) => {
-    if (!text) return;
-    const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), text: text } : task));
-    updateTasks(temp);
-    setter(temp);
-  };
+  // const modifyTaskDueDate = (taskId: number, date: Date | undefined) => {
+  //   const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), dueDate: date } : task));
+  //   updateTasks(temp);
+  //   setter(temp);
+  // };
+
+  // const modifyTaskText = (taskId: number, text: string) => {
+  //   if (text.length === 0) return;
+  //   const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), text: text } : task));
+  //   console.log(temp);
+  //   updateTasks(temp);
+  //   setter(temp);
+  // };
 
   const deleteTask = (taskId: number) => {
     const temp = tasks.filter((task) => task.id === taskId);
@@ -116,8 +125,9 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
     groupDeleteIncompleteTasks,
     groupDeleteCompleteTasks,
     switchTaskCompletedAt,
-    modifyTaskDueDate,
-    modifyTaskText,
+    modifyTaskProps,
+    // modifyTaskDueDate,
+    // modifyTaskText,
     deleteTask,
     createTask,
   };
