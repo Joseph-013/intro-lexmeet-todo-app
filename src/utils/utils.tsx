@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { Task } from "../types/task";
+import { createTasks, deleteTasks, updateTasks } from "../api/tasks";
 
 export function formatToLocalISOString(date: Date) {
   const pad = (num: number) => num.toString().padStart(2, "0");
@@ -30,9 +31,11 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
    * @returns void
    */
   const setTasksDone = (): void => {
-    setter((prev) =>
-      prev.map((task) => (task.completedAt ? task : { ...task, completedAt: new Date(), updatedAt: new Date() }))
+    const temp = tasks.map((task) =>
+      task.completedAt ? task : { ...task, completedAt: new Date(), updatedAt: new Date() }
     );
+    updateTasks(temp);
+    setter(temp);
   };
 
   /**
@@ -40,7 +43,9 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
    * @returns void
    */
   const setTasksUndone = (): void => {
-    setter((prev) => prev.map((task) => ({ ...task, completedAt: undefined, updatedAt: new Date() })));
+    const temp = tasks.map((task) => ({ ...task, completedAt: undefined, updatedAt: new Date() }));
+    updateTasks(temp);
+    setter(temp);
   };
 
   /**
@@ -48,8 +53,9 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
    * @returns void
    */
   const groupDeleteIncompleteTasks = (): void => {
-    const temp = [...tasks];
-    setter(temp.filter((task) => Boolean(task.completedAt)));
+    const temp = tasks.filter((task) => Boolean(task.completedAt));
+    deleteTasks(temp);
+    setter(temp);
   };
 
   /**
@@ -57,34 +63,37 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
    * @returns void
    */
   const groupDeleteCompleteTasks = (): void => {
-    const temp = [...tasks];
-    // const newTasks = temp.filter((task) => Boolean(!task.completedAt));
-    // return newTasks;
-    setter(temp.filter((task) => Boolean(!task.completedAt)));
+    const temp = tasks.filter((task) => Boolean(!task.completedAt));
+    deleteTasks(temp);
+    setter(temp);
   };
 
   const switchTaskCompletedAt = (taskId: number) => {
-    setter((prev) =>
-      prev.map((task) =>
-        task.id === taskId
-          ? { ...task, updatedAt: new Date(), completedAt: task.completedAt ? undefined : new Date() }
-          : task
-      )
+    const temp = tasks.map((task) =>
+      task.id === taskId
+        ? { ...task, updatedAt: new Date(), completedAt: task.completedAt ? undefined : new Date() }
+        : task
     );
+    updateTasks(temp);
+    setter(temp);
   };
 
   const modifyTaskDueDate = (taskId: number, date: Date | undefined) => {
-    setter((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), dueDate: date } : task))
-    );
+    const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), dueDate: date } : task));
+    updateTasks(temp);
+    setter(temp);
   };
 
   const modifyTaskText = (taskId: number, text: string) => {
     if (!text) return;
-    setter((prev) => prev.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), text: text } : task)));
+    const temp = tasks.map((task) => (task.id === taskId ? { ...task, updatedAt: new Date(), text: text } : task));
+    updateTasks(temp);
+    setter(temp);
   };
 
   const deleteTask = (taskId: number) => {
+    const temp = tasks.filter((task) => task.id === taskId);
+    deleteTasks(temp);
     setter((prev) => prev.filter((task) => task.id !== taskId));
   };
 
@@ -97,9 +106,7 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    console.log(_newTask);
-    console.log(tasks);
+    createTasks([_newTask]);
     setter((prev) => [...prev, _newTask]);
   };
 

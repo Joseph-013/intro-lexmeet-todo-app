@@ -152,7 +152,7 @@ function App() {
                 posActionName="Confirm"
                 posAction={() => props.action1?.action()}
               >
-                Confirm set all as complete.
+                Confirm action.
               </BootstrapModal>
             )}
             {props.action2 && (
