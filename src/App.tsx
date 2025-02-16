@@ -6,7 +6,7 @@ import { colors } from "./constants/constants";
 import { useEffect, useState } from "react";
 import BootstrapModal from "./components/BootstrapModal";
 import { formatToLocalISOString, useTask } from "./utils/utils";
-import { fetchTasks } from "./api/tasks";
+import { getTasks } from "./api/tasks";
 import dayjs from "dayjs";
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const fetchedTasks = await fetchTasks();
+        const fetchedTasks = await getTasks();
         setTasks(fetchedTasks);
       } catch (err) {
         console.warn("Fetching dummy tasks failed:", err);
@@ -43,78 +43,81 @@ function App() {
   } = useTask(tasks, setTasks);
 
   return (
-    <main className="main">
-      <header id="app-header">
-        <div className="title">
-          <div id="modified-logo">
-            <img src={logo} alt="LexMeet Inc." id="lexmeet_logo" />
-            <h5 id="todo_logo">My TODO</h5>
+    <>
+      <main className="main">
+        <header id="app-header">
+          <div className="title">
+            <div id="modified-logo">
+              <img src={logo} alt="LexMeet Inc." id="lexmeet_logo" />
+              <h5 id="todo_logo">My TODO</h5>
+            </div>
           </div>
-        </div>
-        <div id="header-newtask-input-container">
-          <div className="input-group">
-            <span className="input-group-text">New Task:</span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Task Name"
-              value={newTask.text}
-              onChange={(e) => setNewTask((prev) => ({ ...prev, text: e.target.value }))}
-            />
-            <input
-              type="datetime-local"
-              className="form-control"
-              value={newTask.dueDate ? formatToLocalISOString(newTask.dueDate) : ""}
-              onChange={(e) => {
-                setNewTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
-              }}
-            />
-            <button className="btn border-light" onClick={() => setNewTask({ text: "", dueDate: undefined })}>
-              Clear
+          <div id="header-newtask-input-container">
+            <div className="input-group">
+              <span className="input-group-text">New Task:</span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Task Name"
+                value={newTask.text}
+                onChange={(e) => setNewTask((prev) => ({ ...prev, text: e.target.value }))}
+              />
+              <input
+                type="datetime-local"
+                className="form-control"
+                value={newTask.dueDate ? formatToLocalISOString(newTask.dueDate) : ""}
+                onChange={(e) => {
+                  setNewTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
+                }}
+              />
+              <button className="btn border-light" onClick={() => setNewTask({ text: "", dueDate: undefined })}>
+                Clear
+              </button>
+            </div>
+            <button className="btn border-light center" onClick={() => createTask(newTask)}>
+              <PlusIcon height={20} width={20} />
             </button>
           </div>
-          <button className="btn border-light center" onClick={() => createTask(newTask)}>
-            <PlusIcon height={20} width={20} />
-          </button>
+        </header>
+        <div className="mt-5 container-fluid row list">
+          <div className="col list-container">
+            <TaskList
+              title="pending"
+              tasks={tasks
+                .filter((task) => task.completedAt === undefined)
+                .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())}
+              colorTheme={colors.brand.orange}
+              action1={{
+                display: <CheckIcon height={30} width={30} />,
+                action: () => setTasksDone(),
+              }}
+              action2={{
+                display: <TrashIcon height={27} width={27} />,
+                action: () => groupDeleteIncompleteTasks(),
+              }}
+            />
+          </div>
+          <div className="col list-container">
+            <TaskList
+              title="completed"
+              tasks={tasks
+                .filter((task) => task.completedAt !== undefined)
+                .sort((a, b) => (a.completedAt?.getTime() ?? 0) - (b.completedAt?.getTime() ?? 0))}
+              colorTheme={colors.brand.purple}
+              action1={{
+                display: <Cross2Icon height={28} width={28} />,
+                action: () => setTasksUndone(),
+              }}
+              action2={{
+                display: <TrashIcon height={27} width={27} />,
+                action: () => groupDeleteCompleteTasks(),
+              }}
+            />
+          </div>
         </div>
-      </header>
-      <div className="mt-5 container-fluid row list">
-        <div className="col list-container">
-          <TaskList
-            title="pending"
-            tasks={tasks
-              .filter((task) => task.completedAt === undefined)
-              .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())}
-            colorTheme={colors.brand.orange}
-            action1={{
-              display: <CheckIcon height={30} width={30} />,
-              action: () => setTasksDone(),
-            }}
-            action2={{
-              display: <TrashIcon height={27} width={27} />,
-              action: () => groupDeleteIncompleteTasks(),
-            }}
-          />
-        </div>
-        <div className="col list-container">
-          <TaskList
-            title="completed"
-            tasks={tasks
-              .filter((task) => task.completedAt !== undefined)
-              .sort((a, b) => (a.completedAt?.getTime() ?? 0) - (b.completedAt?.getTime() ?? 0))}
-            colorTheme={colors.brand.purple}
-            action1={{
-              display: <Cross2Icon height={28} width={28} />,
-              action: () => setTasksUndone(),
-            }}
-            action2={{
-              display: <TrashIcon height={27} width={27} />,
-              action: () => groupDeleteCompleteTasks(),
-            }}
-          />
-        </div>
-      </div>
-    </main>
+      </main>
+      <main className="main-alt">Window too small.</main>
+    </>
   );
 
   function TaskList(props: TaskListProps) {
@@ -137,19 +140,10 @@ function App() {
           <span>{props.title}</span>
           <div className="tasklist-massactions">
             {props.action1 && (
-              // <button
-              //   className="tasklist-massactions-done hover-outline"
-              //   onMouseOver={() => setMassHover(true)}
-              //   onMouseOut={() => setMassHover(false)}
-              //   onClick={() => props.action1?.action()}
-              // >
-              //   {props.action1.display}
-              // </button>
               <BootstrapModal
                 trigger={{
                   className: "tasklist-massactions-done hover-outline",
                   children: props.action1.display,
-                  // onClick: () => props.action1?.action(),
                   triggerProps: {
                     onMouseOver: () => setMassHover(true),
                     onMouseOut: () => setMassHover(false),
@@ -162,19 +156,20 @@ function App() {
               </BootstrapModal>
             )}
             {props.action2 && (
-              <button
-                className="tasklist-massactions-delete hover-outline"
-                onMouseOver={() => setMassHover(true)}
-                onMouseOut={() => setMassHover(false)}
-                onClick={() => props.action2?.action()}
+              <BootstrapModal
+                trigger={{
+                  className: "tasklist-massactions-done hover-outline",
+                  children: props.action2.display,
+                  triggerProps: {
+                    onMouseOver: () => setMassHover(true),
+                    onMouseOut: () => setMassHover(false),
+                  },
+                }}
+                posActionName="Confirm"
+                posAction={() => props.action2?.action()}
               >
-                {props.action2.display}
-              </button>
-              // <BootstrapModal
-              //   trigger={{ className: "tasklist-massactions-done hover-outline", children: props.action1.display }}
-              // >
-              //   Confirm delete tasks.
-              // </BootstrapModal>
+                Confirm delete all tasks.
+              </BootstrapModal>
             )}
           </div>
         </div>

@@ -36,7 +36,28 @@
 }
 
 .main {
+  display: none;
   padding: 2rem 0rem;
+}
+
+@media (min-width: 1000px) {
+  .main {
+    display: block;
+  }
+}
+
+.main-alt {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+}
+
+@media (max-width: 1000px) {
+  .main-alt {
+    display: flex;
+  }
 }
 
 .title {
@@ -177,13 +198,13 @@
 
 .tasklist-list-item-text {
   flex: 1 1 0;
-  /* height: 50px; */
   cursor: default;
   overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: center;
   line-height: 20px;
+  padding-right: 5px;
 }
 
 .tasklist-list-item-text-duedate {
@@ -194,6 +215,8 @@
   /* display: none; */
   height: 100%;
   gap: 10px;
+  border-left: 1px solid rgba(0, 0, 0, 0.637);
+  padding-left: 10px;
 }
 
 .tasklist-list-item-controls {

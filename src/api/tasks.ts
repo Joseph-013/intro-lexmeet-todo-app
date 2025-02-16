@@ -7,7 +7,7 @@ const FAKEDATA_API_URL = "https://jsonplaceholder.typicode.com/todos";
 // const DATE_FORMAT = "YYYY-MM-DD HH:mm";
 const FAKEUPLOADENDPOINT_API_URL = "https://webhook.site/c7217343-7479-4621-b12a-7830fe7043c9"
 
-export const fetchTasks = async (): Promise<Task[]> => {
+export const getTasks = async (): Promise<Task[]> => {
   const response = await fetch(FAKEDATA_API_URL);
   if (!response.ok) throw new Error("Task fetching failed");
 
@@ -23,3 +23,6 @@ export const fetchTasks = async (): Promise<Task[]> => {
     updatedAt: dayjs().toDate(),
   })) 
 }
+
+export const updateTasks=()=>{}
+export const deleteTasks=()=>{}

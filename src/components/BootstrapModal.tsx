@@ -19,21 +19,6 @@ type BootstrapModalPropType = {
 function BootstrapModal(props: BootstrapModalPropType) {
   const [visible, setVisible] = useState<boolean>(false);
 
-  // const toggleVisibility = () => {
-  //   if (props.trigger?.onClick) {
-  //     props.trigger.onClick();
-  //   }
-  //   setVisible((prev) => {
-  //     const newState = !prev;
-  //     return newState;
-  //   });
-  // };
-
-  // const triggerClick = (e) => {
-  //   if (props.trigger.onClick)
-  //   props.trigger.onClick()
-  // }
-
   return (
     <>
       <button
