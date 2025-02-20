@@ -193,7 +193,7 @@ function App() {
       const [datetime, setDatetime] = useState<Date | null>(task.dueDate instanceof Date ? task.dueDate : null);
       const dateInputRef = useRef<HTMLInputElement | null>(null);
       const currentDate = new Date();
-      const isPastDue = datetime && datetime < currentDate;
+      const isPastDue = task.dueDate && task.dueDate < currentDate;
 
       return (
         <li
