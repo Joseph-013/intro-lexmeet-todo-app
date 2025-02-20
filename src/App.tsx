@@ -3,14 +3,15 @@ import "./App.css";
 import logo from "./assets/lexmeet_logo.png";
 import { Task, TaskListProps } from "./types/task";
 import { colors } from "./constants/constants";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BootstrapModal from "./components/BootstrapModal";
-import { formatToLocalISOString, useTask } from "./utils/utils";
+import { formatToLocalISOString, useTask, validateNoPastDate } from "./utils/utils";
 import { getTasks } from "./api/tasks";
 import dayjs from "dayjs";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -70,6 +71,9 @@ function App() {
                 onChange={(e) => {
                   setNewTask((prev) => ({ ...prev, dueDate: new Date(e.target.value) }));
                 }}
+                min={new Date().toISOString().slice(0, 16)}
+                ref={dateInputRef}
+                onBlur={() => validateNoPastDate(dateInputRef)}
               />
               <button className="btn border-light" onClick={() => setNewTask({ text: "", dueDate: undefined })}>
                 Clear
@@ -135,7 +139,7 @@ function App() {
           className="tasklist-title"
           style={{
             borderColor: `${listHovered ? `rgb(${props.colorTheme})` : "transparent"}`,
-            backgroundColor: `rgba(${props.colorTheme}, 0.20)`,
+            backgroundColor: `rgba(${props.colorTheme}, 0.95)`,
           }}
         >
           <span>{props.title}</span>
@@ -187,12 +191,18 @@ function App() {
       const [hovered, setHovered] = useState<boolean>(false);
       const [taskString, setTaskString] = useState<string>(task.text);
       const [datetime, setDatetime] = useState<Date | null>(task.dueDate instanceof Date ? task.dueDate : null);
+      const dateInputRef = useRef<HTMLInputElement | null>(null);
+      const currentDate = new Date();
+      const isPastDue = datetime && datetime < currentDate;
 
       return (
         <li
           className={`tasklist-list-item ${massHover ? "tasklist-list-item-masshover" : ""}`}
           onMouseOver={() => setHovered(true)}
           onMouseOut={() => setHovered(false)}
+          style={{
+            backgroundColor: isPastDue && !task.completedAt ? "#ffcccc" : "transparent",
+          }}
         >
           <div className="tasklist-list-item-checkbox">
             <input
@@ -204,7 +214,7 @@ function App() {
             />
             <label className="tasklist-list-item-checkbox-square" htmlFor={`checkbox${task.id}`} />
             {task.completedAt && (
-              <CheckIcon className={`tasklist-list-item-checkbox-checkicon`} height={45} width={45} />
+              <CheckIcon className={`tasklist-list-item-checkbox-checkicon`} height={25} width={25} />
             )}
           </div>
           <div
@@ -235,9 +245,7 @@ function App() {
               title="Edit Task"
               posActionName="Save"
               posAction={(setVisible) => {
-                // console.log("reached");
-                // modifyTaskText(task.id, taskString);
-                // modifyTaskDueDate(task.id, datetime ? datetime : undefined);
+                if (taskString.length < 1) return;
                 modifyTaskProps(task.id, taskString, datetime);
                 setVisible(false);
               }}
@@ -261,6 +269,9 @@ function App() {
                     onChange={(e) => {
                       setDatetime(new Date(e.target.value));
                     }}
+                    onBlur={() => validateNoPastDate(dateInputRef)}
+                    ref={dateInputRef}
+                    min={new Date().toISOString().slice(0, 16)}
                   />
                   <button className="btn btn-secondary" onClick={() => setDatetime(null)}>
                     Clear

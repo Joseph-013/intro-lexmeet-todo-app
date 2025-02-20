@@ -69,10 +69,6 @@
   padding: 0 20px;
 }
 
-/* .tasklist {
-  border-radius: 20px;
-} */
-
 .tasklist-title {
   font-family: "Roboto Slab", serif;
   display: flex;
@@ -83,6 +79,7 @@
   border-style: solid;
   border-radius: 7px;
   position: relative;
+  color: white;
 }
 
 .tasklist-title:hover button {
@@ -113,6 +110,7 @@
   border-radius: 10px;
   padding: 0;
   display: none;
+  color: white;
 }
 
 .tasklist-list {
@@ -189,8 +187,8 @@
 
 .tasklist-list-item-checkbox-checkicon {
   position: absolute;
-  top: -30%;
-  left: 50%;
+  bottom: 5%;
+  left: 48%;
   transform: translate(-50%);
   color: rgb(var(--static-brand-purple));
   pointer-events: none;

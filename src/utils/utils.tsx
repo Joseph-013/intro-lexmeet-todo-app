@@ -79,6 +79,7 @@ export function useTask(tasks: Task[], setter: React.Dispatch<React.SetStateActi
   };
 
   const modifyTaskProps = (taskId: number, text: string, dueDate: Date | null) => {
+    if (text.length < 1) return;
     const temp = tasks.map((task) =>
       task.id === taskId ? { ...task, text: text, updatedAt: new Date(), dueDate: dueDate ? dueDate : undefined } : task
     );
@@ -139,4 +140,20 @@ export function getNextId(tasks: Task[]): number {
     if (task.id > highestId) highestId = task.id;
   });
   return ++highestId;
+}
+
+export function validateNoPastDate(ref: React.RefObject<HTMLInputElement | null>) {
+  if (!ref.current) return;
+
+  const input = ref.current;
+  const now = new Date();
+  const selectedDate = new Date(input.value);
+
+  if (selectedDate < now) {
+    input.setCustomValidity(`Date cannot be in the past.`);
+  } else {
+    input.setCustomValidity("");
+  }
+
+  input.reportValidity(); // Show validation popup
 }
